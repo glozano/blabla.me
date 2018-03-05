@@ -1,36 +1,62 @@
 <button mat-fab (click)="onClickUserInfo()">
   <mat-icon>person</mat-icon>
 </button>
-<div class="chat-container">
+<div class="chat-container" #chatContainer>
   <mat-card class="main-card">
-    <mat-list class="chat-list">
-      <mat-list-item *ngFor="let message of messages" [ngClass]="[(message.action === undefined && message.from.id === user.id)? 'chat-list-item': '']">
-        <img mat-list-avatar *ngIf="message.action === undefined" [src]="message.from.avatar">
+
+    <mat-list class="chat-list" (focus)="showButton()" [style.height.px]="chatHeight" (click)="cleanGifs()">
+      <mat-list-item *ngFor="let message of messages" class="chat-list-item" [ngClass]="[(message.action === undefined && message.from.id === user.id)? 'self-list-item': '']">
+        <!--<img mat-list-avatar *ngIf="message.action === undefined" [src]="message.from.avatar">-->
         <h4 mat-line *ngIf="message.action === undefined">
-          <b>{{message.from.name}}</b>
+          <b>{{message.from.name}} dice: </b>
         </h4>
-        <p mat-line *ngIf="message.action === undefined">
-          <span> {{message.content}} </span>
+        <!--<h4 mat-line *ngIf="message.action === undefined && message.from.id === user.id">-->
+          <!--<b>dijiste: </b>-->
+        <!--</h4>-->
+        <p mat-line *ngIf="message.action === undefined && message.content.type === 'gif'" class="gif-message">
+          <img src="{{message.content.images.fixed_height.url}}"
+               height="{{message.content.images.fixed_height.height}}"
+               width="{{message.content.images.fixed_height.width}}"
+          />
         </p>
         <p mat-line *ngIf="message.action === action.JOINED" class="chat-notification">
-          <span> <b>{{message.from.name}}</b> joined to the conversation. </span>
+          <span> <b>{{message.from.name}}</b> se sumó a la conversación. </span>
         </p>
         <p mat-line *ngIf="message.action === action.RENAME" class="chat-notification">
-          <span> <b>{{message.content.previousUsername}}</b> is now <b>{{message.content.username}}</b> </span>
+          <span> <b>{{message.content.previousUsername}}</b> se llama ahora <b>{{message.content.username}}</b> </span>
         </p>
       </mat-list-item>
     </mat-list>
-    <div class="chat-footer-container">
-      <mat-icon>message</mat-icon>
+
+    <div class="chat-footer-container" #chatFooter>
+      <!--<mat-icon>search</mat-icon>-->
+      <!--<div class="main-button" #mainButton [hidden]="!showBtn">-->
+      <div class="main-button" #mainButton [@btnState]="btnState">
+        <div class="main">
+          <div class="circle"></div>
+        </div>
+      </div>
       <mat-form-field class="chat-input">
         <input matInput 
                #inputMessage 
                maxlength="140" 
-               placeholder="Type your message" 
-               [(ngModel)]="messageContent" 
-               (keyup.enter)="sendMessage(messageContent)">
-        <mat-hint align="end">{{inputMessage.value.length}}/140</mat-hint>
+               placeholder=""
+               [(ngModel)]="messageContent"
+               (focus)="hideButton()"
+               (keyup.enter)="searchGiphy(messageContent)">
+        <!--<mat-hint align="end">{{inputMessage.value.length}}/140</mat-hint>-->
       </mat-form-field>
+      <div class="gif-holder">
+        <div class="gif" *ngFor="let gif of currentGifs">
+          <!--<img src="assets/spinner.gif"/>-->
+          <img src="{{gif.images.fixed_height_small.url}}"
+               height="{{gif.images.fixed_height_small.height}}"
+               width="{{gif.images.fixed_height_small.width}}"
+               (click)="sendMessage(gif)"
+               (error)="errorHandler($event)"
+          />
+        </div>
+      </div>
     </div>
   </mat-card>
 </div>

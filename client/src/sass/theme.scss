@@ -1,0 +1,40 @@
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://www.google.com/design/spec/style/color.html
+$nientiendo-primary: mat-palette($mat-deep-orange);
+$nientiendo-accent:  mat-palette($mat-deep-orange, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$nientiendo-warn:    mat-palette($mat-pink);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$nientiendo-theme: mat-light-theme($nientiendo-primary, $nientiendo-accent, $nientiendo-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+
+$general-typography: mat-typography-config(
+        $font-family: "'Dancing Script', cursive;",
+        $body-2:        mat-typography-level(14px, 24px, 600)
+);
+
+$secondary-typography: mat-typography-config(
+        $font-family: "'Kanit', sans-serif;"
+);
+
+
+// Be sure that you only ever include this mixin once!
+@include mat-core($general-typography);
+@include mat-toolbar-typography($secondary-typography);
+@include mat-dialog-typography($secondary-typography);
+
+@include angular-material-theme($nientiendo-theme);
