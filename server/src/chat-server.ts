@@ -5,7 +5,7 @@ import * as socketIo from 'socket.io';
 import { Message } from './model';
 
 export class ChatServer {
-    public static readonly PORT:number = 8080;
+    public static readonly PORT:number = 4080;
     private app: express.Application;
     private server: Server;
     private io: SocketIO.Server;
