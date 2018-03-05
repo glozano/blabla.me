@@ -97,11 +97,11 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private hideButton():void {
+    public hideButton():void {
       this.btnState = 'inactive';
   }
 
-    private showButton():void {
+    public showButton():void {
         this.btnState = 'active';
     }
 
