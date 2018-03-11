@@ -1,15 +1,27 @@
 $orange-light: #ff4c20;
+$bkg-color: #cc7878;
+$btn-1:#EA80FC;
+$btn-2:#B388FF;
+$btn-3:#8C9EFF;
+$light-blue:#cdd5ff;
+$wrapper-padding: 13px;
+
+
+.mat-drawer-container[fullscreen]{
+  overflow: hidden;
+  box-shadow: inset 0px 0px 25px 13px #ffd4d4;
+  padding: $wrapper-padding;
+  background-color: #cc7878;
+}
 
 .root-wrapper{
-  background-color: #ffd4d4;
-  padding: 13px;
   height: 100%;
   overflow: hidden;
 }
 
 .app-content {
   width: 100%;
-  height: calc(100% - 80px);
+  height: calc(100% - 56px);
   box-sizing: border-box;
   overflow: hidden;
   .mat-raised-button.mat-accent, .mat-fab.mat-accent, .mat-mini-fab.mat-accent {
@@ -17,13 +29,56 @@ $orange-light: #ff4c20;
   }
 }
 
+.mat-toolbar.mat-toolbar-single-row{
+  padding-right: 0;
+  .header-btn{
+    height:100%;
+    padding: 0 10px;
+    border:none;
+    margin: 0;
+    color: #e8e8e8;
+  }
+  #btn-1{
+    background-color: $btn-1;
+  }
+  #btn-2{
+    background-color: $btn-2;
+  }
+  #btn-3{
+    background-color: $btn-3;
+  }
+  .flex-filler{
+    flex:1 1 auto;
+  }
+}
+
 .mat-dialog-container {
   background: $orange-light !important;
   color: white !important;
-  .mat-warn .mat-input-element, .mat-form-field-invalid .mat-input-element,
-  .mat-form-field-invalid .mat-form-field-label,.mat-error {
-    color: white;
-    caret-color: white;
+
+  img{
+    width: 100%;
+  }
+
+  .mat-input-element,
+  .mat-form-field-label,
+  .mat-error{
+    color: rgba(205, 213, 255, 0.9) !important;
+    caret-color: rgba(205, 213, 255, 0.9) !important;
+  }
+  .mat-form-field-ripple,
+  .mat-input-underline{
+    background-color: rgba(205, 213, 255, 0.7) !important;
+  }
+  .mat-hint,
+  .mat-form-field-required-marker{
+    color: rgba(205, 213, 255, 0.7) !important;
+  }
+
+  .mat-form-field-wrapper{
+    margin-bottom: 20px;
+    margin-right: 15px;
+    margin-top: 15px;
   }
   .mat-dialog-title{
     //text-align: center;
@@ -31,6 +86,17 @@ $orange-light: #ff4c20;
   }
   .mat-dialog-content {
     font-size: 1.4em;
+
+    &.info-dialog{
+      font-family: 'Kanit', sans-serif;;
+      font-size: 1em;
+      text-align: center;
+      font-weight: 100;
+      color:$light-blue;
+      svg{
+        width: 22px;
+      }
+    }
   }
 }
 
@@ -49,10 +115,10 @@ $orange-light: #ff4c20;
     right: 25px;
     bottom: 120px;
     .chat-notification{
-      background-color: #ffd4d4;
-      border-radius: 10px;
-      padding: 2px;
-      margin: 7px;
+      background-color: $light-blue;
+      border-radius: 5px;
+      margin: 7px !important;;
+      padding: 4px !important;
     }
     .chat-list-item {
       margin-top: 5px;
@@ -62,6 +128,9 @@ $orange-light: #ff4c20;
       h4{
         padding: 6px 3px;
         font-size: 1.4em;
+      }
+      &.self-list-item {
+        text-align: right;
       }
     }
   }
@@ -78,49 +147,55 @@ $orange-light: #ff4c20;
   background-color: white;
   overflow: auto;
   .mat-form-field-underline {
-    background-color: white;
+    background: none;
   }
   .main-button {
     -webkit-transition: all .3s linear 0s;
 
     .main{
       background-color: white;
-      width:33px;
-      height:33px;
+      width:66px;
+      height:66px;
       border:1px solid #CCC;
       position:absolute;
       top:0; bottom:0; left:0;right:0;
       margin:auto;
       border-radius:50%;
       -webkit-transition: all .3s linear 0s;
-    }
-
-    .circle{
-      width:8px;
-      height:8px;
-      background:$orange-light;
-      border-radius:50%;
-      position:absolute;
-      top:0; bottom:0; left:0;right:0;
-      overflow:hidden;
-      margin:auto;
-      animation: circle 6s linear infinite;
-    }
-
-    @keyframes circle{
-      0%{
-        transform:rotate(0deg)
-        translate(-17px)
-        rotate(0deg);
-
+      mat-icon{
+        padding: 18px;
+        font-size: 2em;
+        color: #e8e9e8;
       }
-      100%{
-        transform:rotate(360deg)
-        translate(-17px)
-        rotate(-360deg);
+      .circle{
+        width:12px;
+        height:12px;
+        background:$orange-light;
+        border-radius:50%;
+        position:absolute;
+        top:0; bottom:0; left:0;right:0;
+        overflow:hidden;
+        margin:auto;
+        animation: circle 6s linear infinite;
+      }
+
+      @keyframes circle{
+        0%{
+          transform:rotate(0deg)
+          translate(-34px)
+          rotate(0deg);
+
+        }
+        100%{
+          transform:rotate(360deg)
+          translate(-34px)
+          rotate(-360deg);
+        }
       }
     }
+
   }
+
   .gif-holder {
     height: 40%;
     .gif{
@@ -130,3 +205,5 @@ $orange-light: #ff4c20;
     }
   }
 }
+
+

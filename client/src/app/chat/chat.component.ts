@@ -6,13 +6,10 @@ import { Event } from './shared/model/event';
 import { Message } from './shared/model/message';
 import { User } from './shared/model/user';
 import { SocketService } from './shared/services/socket.service';
-import { DialogUserComponent } from './dialog-user/dialog-user.component';
-import { DialogUserType } from './dialog-user/dialog-user-type';
 import axios from 'restyped-axios'
 import { GiphyAPI } from 'restyped-giphy-api'
 
 const client = axios.create<GiphyAPI>({baseURL: 'http://api.giphy.com/v1'});
-const AVATAR_URL = 'https://api.adorable.io/avatars/285';
 const spinner = 'assets/spinner.gif';
 
 @Component({
@@ -35,18 +32,11 @@ const spinner = 'assets/spinner.gif';
 export class ChatComponent implements OnInit, AfterViewInit {
   action = Action;
   user: User;
+  searchTimer: any;
   messages: Message[] = [];
   messageContent: string;
   btnState = 'inactive';
   ioConnection: any;
-  dialogRef: MatDialogRef<DialogUserComponent> | null;
-  defaultDialogUserParams: any = {
-    disableClose: true,
-    data: {
-      title: 'Bienvenido, ',
-      dialogType: DialogUserType.NEW
-    }
-  };
   currentGifs: any[] = [];
   chatHeight: number;
 
@@ -63,17 +53,14 @@ export class ChatComponent implements OnInit, AfterViewInit {
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.initModel();
-    // this.initGifs();
-    // Using timeout due to https://github.com/angular/angular/issues/14748
-    setTimeout(() => {
-      this.openUserPopup(this.defaultDialogUserParams);
-    }, 0);
-
-    setTimeout(() => {
-        this.showButton();
-    }, 1000);
-
+      this.ioConnection = this.socketService.onMessage()
+          .subscribe((message: Message) => {
+              this.messages.push(message);
+          });
+      this.user = JSON.parse(window.localStorage.getItem('user'));
+      setTimeout(() => {
+          this.showButton();
+      }, 1000);
   }
 
   errorHandler(event) {
@@ -97,86 +84,25 @@ export class ChatComponent implements OnInit, AfterViewInit {
     }
   }
 
-    public hideButton():void {
+    public hideButton(): void {
       this.btnState = 'inactive';
   }
 
-    public showButton():void {
+    public showButton(): void {
         this.btnState = 'active';
     }
 
-  // private initGifs(): void {
-      // this.giphyTrending();
-  // }
-
-  private initModel(): void {
-    const randomId = this.getRandomId();
-    this.user = {
-      id: randomId,
-      avatar: `${AVATAR_URL}/${randomId}.png`
-    };
-  }
-
-  private initIoConnection(): void {
-    this.socketService.initSocket();
-
-    this.ioConnection = this.socketService.onMessage()
-      .subscribe((message: Message) => {
-        this.messages.push(message);
-      });
-
-
-    this.socketService.onEvent(Event.CONNECT)
-      .subscribe(() => {
-        console.log('connected');
-      });
-
-    this.socketService.onEvent(Event.DISCONNECT)
-      .subscribe(() => {
-        console.log('disconnected');
-      });
-  }
-
-  private getRandomId(): number {
-    return Math.floor(Math.random() * (1000000)) + 1;
-  }
-
-  public onClickUserInfo() {
-    this.openUserPopup({
-      data: {
-        username: this.user.name,
-        title: '¿Quieres cambiar?',
-        dialogType: DialogUserType.EDIT
-      }
-    });
-  }
-
   private adjustHeights(): void {
       if(this.chatFooter.nativeElement.offsetHeight < 100){
-        this.chatHeight = this.chatFooter.nativeElement.offsetTop - 100;
+        this.chatHeight = this.chatFooter.nativeElement.offsetTop - 200;
       }else{
-        this.chatHeight = this.chatFooter.nativeElement.offsetTop;
+        this.chatHeight = this.chatFooter.nativeElement.offsetTop - 100;
       }
   };
 
-  private openUserPopup(params): void {
-    this.dialogRef = this.dialog.open(DialogUserComponent, params);
-    this.dialogRef.afterClosed().subscribe(paramsDialog => {
-      if (!paramsDialog) {
-        return;
-      }
-
-      this.user.name = paramsDialog.username;
-      if (paramsDialog.dialogType === DialogUserType.NEW) {
-        this.initIoConnection();
-        this.sendNotification(paramsDialog, Action.JOINED);
-      } else if (paramsDialog.dialogType === DialogUserType.EDIT) {
-        this.sendNotification(paramsDialog, Action.RENAME);
-      }
-    });
-  }
-
   public sendMessage(message: any): void {
+    this.user = JSON.parse(window.localStorage.getItem('user'));
+
     if (!message) {
       return;
     }
@@ -190,21 +116,6 @@ export class ChatComponent implements OnInit, AfterViewInit {
     this.showButton();
     setTimeout((): void => {this.adjustHeights()}, 500);
   }
-
-    // public giphyTrending(): any {
-    //     client.request( {
-    //         url: '/gifs/trending',
-    //         params: {
-    //             api_key: '9dHK7nkPwZxfNdkiLFUt9MidUP7jxidQ',
-    //             limit: 8
-    //         }
-    //     }).then((res) => {
-    //         for (const gif of res.data.data){
-    //             this.currentGifs.push(gif);
-    //         };
-    //         setTimeout((): void => {this.adjustHeights()}, 500);
-    //     })
-    // }
 
   public searchGiphy(message: string): void {
       client.request({
@@ -223,29 +134,17 @@ export class ChatComponent implements OnInit, AfterViewInit {
       })
   }
 
+  public initSearch(message: string): void {
+      clearTimeout(this.searchTimer);
+      this.searchTimer = setTimeout(() => { this.searchGiphy(message); }, 200)
+  }
+
+  public resetCounter(): void {
+      clearTimeout(this.searchTimer);
+  }
+
   public cleanGifs(): void {
       this.currentGifs = [];
       this.showButton();
-  }
-
-  public sendNotification(params: any, action: Action): void {
-    let message: Message;
-
-    if (action === Action.JOINED) {
-      message = {
-        from: this.user,
-        action: action
-      }
-    } else if (action === Action.RENAME) {
-      message = {
-        action: action,
-        content: {
-          username: this.user.name,
-          previousUsername: params.previousUsername
-        }
-      };
-    }
-
-    this.socketService.send(message);
   }
 }

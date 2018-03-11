@@ -10,6 +10,7 @@ export class ChatServer {
     private server: Server;
     private io: SocketIO.Server;
     private port: string | number;
+    private online: number;
 
     constructor() {
         this.createApp();
@@ -37,18 +38,29 @@ export class ChatServer {
 
     private listen(): void {
         this.server.listen(this.port, () => {
+            this.online = 0;
             console.log('Running server on port %s', this.port);
         });
-
         this.io.on('connect', (socket: any) => {
             console.log('Connected client on port %s.', this.port);
+            this.online++;
+            console.log('emit online %s',this.online);
+            this.io.emit('online', this.online);
+
             socket.on('message', (m: Message) => {
                 console.log('[server](message): %s', JSON.stringify(m));
                 this.io.emit('message', m);
             });
 
+            // socket.on('online', () => {
+            //     this.io.emit('online', this.online);
+            // });
+
             socket.on('disconnect', () => {
                 console.log('Client disconnected');
+                this.online--;
+                console.log('emit online %s',this.online);
+                this.io.emit('online', this.online);
             });
         });
     }

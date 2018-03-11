@@ -2,10 +2,10 @@
 
 <mat-dialog-content>
   <mat-form-field>
-    <input matInput name="username" placeholder="Apodo"
+    <input matInput name="username" placeholder="Nombre"
            [(ngModel)]="params.username" (keyup.enter)="onSave()" [formControl]="usernameFormControl" required>
     <mat-error>Este campo es obligatorio</mat-error>
-    <mat-hint>Ingresa tu apodo por favor</mat-hint>
+    <mat-hint>Ingresa tu nombre por favor</mat-hint>
   </mat-form-field>
 </mat-dialog-content>
 

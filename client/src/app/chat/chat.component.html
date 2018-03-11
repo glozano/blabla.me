@@ -1,6 +1,3 @@
-<button mat-fab (click)="onClickUserInfo()">
-  <mat-icon>person</mat-icon>
-</button>
 <div class="chat-container" #chatContainer>
   <mat-card class="main-card">
 
@@ -14,9 +11,9 @@
           <!--<b>dijiste: </b>-->
         <!--</h4>-->
         <p mat-line *ngIf="message.action === undefined && message.content.type === 'gif'" class="gif-message">
-          <img src="{{message.content.images.fixed_height.url}}"
-               height="{{message.content.images.fixed_height.height}}"
-               width="{{message.content.images.fixed_height.width}}"
+          <img src="{{message.content.images.fixed_width.url}}"
+               height="{{message.content.images.fixed_width.height}}"
+               width="{{message.content.images.fixed_width.width}}"
           />
         </p>
         <p mat-line *ngIf="message.action === action.JOINED" class="chat-notification">
@@ -33,7 +30,9 @@
       <!--<div class="main-button" #mainButton [hidden]="!showBtn">-->
       <div class="main-button" #mainButton [@btnState]="btnState">
         <div class="main">
-          <div class="circle"></div>
+          <mat-icon>search</mat-icon>
+          <div class="circle">
+          </div>
         </div>
       </div>
       <mat-form-field class="chat-input">
@@ -43,7 +42,8 @@
                placeholder=""
                [(ngModel)]="messageContent"
                (focus)="hideButton()"
-               (keyup.enter)="searchGiphy(messageContent)">
+               (keyup)="initSearch(messageContent)"
+               (keydown)="resetCounter()">
         <!--<mat-hint align="end">{{inputMessage.value.length}}/140</mat-hint>-->
       </mat-form-field>
       <div class="gif-holder">

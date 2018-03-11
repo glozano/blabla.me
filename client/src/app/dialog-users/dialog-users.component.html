@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Usuarios conectados: {{online}}</h2>
+
+<mat-dialog-content>
+  <p>
+    <img *ngIf="online == 1" src="https://media.giphy.com/media/hEc4k5pN17GZq/giphy.gif"/>
+    <img *ngIf="online > 1 && online < 5" src="https://media.giphy.com/media/XyLwEmBGqxkti/giphy.gif"/>
+    <img *ngIf="online >= 5" src="https://media.giphy.com/media/yoJC2GnSClbPOkV0eA/giphy.gif"/>
+  </p>
+
+
+
+</mat-dialog-content>
